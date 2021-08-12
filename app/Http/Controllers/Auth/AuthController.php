@@ -48,7 +48,6 @@ class AuthController extends Controller
         return view('auth.reset', compact('judul'));
     }
     public function _proses_login(Request $request){
-
         $username = $request->username;
         $password = $request->password;
         $next = $request->next;
@@ -114,7 +113,7 @@ class AuthController extends Controller
               $status = [
                       'status' => false,
                       'message'=>'Email atau username tidak ditemukan!'
-            ];
+              ];
                   return response()->json($status);
                   // return redirect('login')->with(['gagal'=>'<script type="text/javascript">
             //                 $.toast({
@@ -151,39 +150,29 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), $rules, $messages);
  
         if($validator->fails()){
-            return redirect()->back()->withErrors($validator)->withInput($request->all);
+              return response()->json([
+                'status' => false,
+                'message' => $validator->errors(),
+            ], 403);
         }
 
         $user = new User;
         $user->name = ucwords(strtolower($request->name));
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
-        $user->save();
 
-        if($this->sendVerifyEmail($request->email)){
-            return redirect()->back()->with(['sukses'=>'<script type="text/javascript">
-                            $.toast({
-                              heading   : "Sukses",
-                              text    : "Berhasil registrasi dan email verifikasi sudah dikirim ke email anda. Silahkan login !",
-                              showHideTransition : "slide",
-                              icon    : "success",
-                              hideAfter   : false,
-                              position    : "bottom-right",
-                              bgColor   : "#2ECC71"
-                            })
-                        </script>']);
+        if($user->save()){
+            $status = [
+                'status' => true,
+                'message'=>'Anda berhasil registrasi, silahkan login untuk masuk'
+                ];
+            return response()->json($status);
         }else{
-            return redirect()->back()->with(['sukses'=>'<script type="text/javascript">
-                            $.toast({
-                              heading   : "Sukses",
-                              text    : "Berhasil registrasi, silahkan login !",
-                              showHideTransition : "slide",
-                              icon    : "warning",
-                              hideAfter   : false,
-                              position    : "bottom-right",
-                              bgColor   : "#2ECC71"
-                            })
-                        </script>']);
+          $status = [
+            'status' => false,
+            'message'=>'Gagal, silahkan ulangi kembali'
+            ];
+          return response()->json($status);
         }
     }
 

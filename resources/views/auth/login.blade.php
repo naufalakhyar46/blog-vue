@@ -45,9 +45,9 @@ $konfig = App\Models\Konfigurasi::first();
       <div class="text-center">
         <a class="small" href="{{url('/')}}"><b>>> Back to Home</b></a>
       </div>
-      <!-- <div class="text-center">
+      {{-- <div class="text-center">
         <a class="small" href="{{route('reset')}}">Forgot Password?</a>
-      </div>
+      </div> --}}
     </div>
   </div>
 @endsection

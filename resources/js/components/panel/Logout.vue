@@ -30,7 +30,7 @@ export default {
             axios.get('/logout').then((response) => {
                     localStorage.removeItem('jwt')
                     localStorage.removeItem('user')
-                    window.location.href= '/login';
+                    window.location.href= '/auth/login';
             }).catch((error) => {
                 // console.log(error)
             })

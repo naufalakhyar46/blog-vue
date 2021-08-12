@@ -22,7 +22,7 @@
                         </li>
                     @else
                     <li>
-                      <a href="{{route('login')}}" title="Login"><i class="fa fa-key"></i></a>
+                      <a href="{{url('/auth/login')}}" title="Login"><i class="fa fa-key"></i></a>
                     </li>
                     @endif
                     <li>

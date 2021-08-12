@@ -7,6 +7,8 @@ import Dashboard from './pages/dashboard/Index.vue';
 import Blog from './pages/blog/Index.vue';
 import BlogCreate from './pages/blog/Create.vue';
 import BlogEdit from './pages/blog/Edit.vue';
+import Login from './pages/auth/Login.vue';
+import Register from './pages/auth/Register.vue';
 import Pengguna from './pages/pengguna/Index.vue';
 import Profile from './pages/pengguna/Profile.vue';
 import ChangePass from './pages/pengguna/ChangePass.vue';
@@ -16,6 +18,18 @@ import NotFound from './pages/not-found/Index.vue';
 import NProgress from 'nprogress'
 
 const routes = [
+    {
+        name: 'Login',
+        path: '/auth/login',
+        component: Login,
+        meta: { guest: true ,title:'Login'},
+    },
+    {
+        name: 'Register',
+        path: '/auth/register',
+        component: Register,
+        meta: { guest: true ,title:'Register'},
+    },
     {
         name: 'Dashboard',
         path: '/panel/dashboard',
@@ -71,6 +85,7 @@ const routes = [
     {
         path: '*',
         component: NotFound,
+        // meta: { guest: true , title:'Not Found' }
     },
 ]
 
@@ -86,16 +101,16 @@ router.beforeEach((to, from, next) => {
     document.title = 'Blog Vue | ' + to.meta.title
     const token = localStorage.getItem('jwt') == null;  
     if (to.matched.some(record => record.meta.guest)) {
-        if (!token) window.location.href= '/login';
+        if (!token) window.location.href= '/panel/dashboard';
         else next()
     } 
     if (to.matched.some(record => record.meta.requiresAuth)) { 
         if (token) {
-        next({
-            path: '/login',
-            query: { redirect: to.fullPath }
-        })
-            window.location.href= '/login';
+        // next({
+        //     path: '/auth/login',
+        //     query: { redirect: to.fullPath }
+        // })
+            window.location.href= '/auth/login';
         } else {
         next()
         } 
