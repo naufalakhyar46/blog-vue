@@ -66,11 +66,12 @@ class AuthController extends Controller
               $link = $next;
             }
         }
-        if(!$token = auth()->setTTL(7200)->attempt(['email'=>$username,'password'=>$password])){
-          return response()->json(['message'=>'invalid credentials'], 401);
-        }
+        // if(!$token = auth()->setTTL(7200)->attempt(['email'=>$username,'password'=>$password])){
+        //   return response()->json(['message'=>'invalid credentials'], 401);
+        // }
         if($data){ //apakah email tersebut ada atau tidak
             if(Hash::check($password,$data->password)){
+              $token = auth()->setTTL(7200)->attempt(['email'=>$username,'password'=>$password]);
                 session()->put('id', $data->id);
                 session()->put('name', $data->name);
                 session()->put('email', $data->email);
@@ -81,6 +82,7 @@ class AuthController extends Controller
                   $response = new Response;
                   $response->withCookie(cookie('username', $username, $menit));
                     $status = [
+                      'status' => true,
                       'data'=>$data,
                       'token'=>$token,
                       'message'=>'Berhasil login'
@@ -89,51 +91,42 @@ class AuthController extends Controller
                 	
                 }else{
                     $status = [
+                      'status' => true,
                       'data'=>$data,
                       'token'=>$token,
                       'message'=>'Berhasil login'
                   ];
                   return response()->json($status);
-                	// return redirect($link)->with(['sukses'=>'<script type="text/javascript">
-                  //           $.toast({
-                  //             heading   : "Sukses",
-                  //             text    : "Hai, selamat datang '.$request->username.'",
-                  //             showHideTransition : "slide",
-                  //             icon    : "success",
-                  //             hideAfter   : false,
-                  //             position    : "bottom-right",
-                  //             bgColor   : "#2ECC71"
-                  //           })
-                  //       </script>']);	
+                	
                 }
                 
             }
             else{
-                return redirect('login')->with(['gagal'=>'<script type="text/javascript">
-                            $.toast({
-                              heading   : "Gagal",
-                              text    : "Password salah!",
-                              showHideTransition : "slide",
-                              icon    : "warning",
-                              hideAfter   : false,
-                              position    : "bottom-right",
-                              bgColor   : "#FF4859"
-                            })
-                        </script>'])->withInput();
+                $status = [
+                      'status' => false,
+                      'message'=>'Password salah!'
+              ];
+              return response()->json($status);
+              
             }
         }
         else{
-            return redirect('login')->with(['gagal'=>'<script type="text/javascript">
-                            $.toast({
-                              heading   : "Gagal",
-                              text    : "Email atau username tidak ditemukan!",
-                              showHideTransition : "slide",
-                              icon    : "warning",
-                              hideAfter   : false,
-                              position    : "bottom-right",
-                              bgColor   : "#FF4859"
-                            })
-                        </script>']);
+              $status = [
+                      'status' => false,
+                      'message'=>'Email atau username tidak ditemukan!'
+            ];
+                  return response()->json($status);
+                  // return redirect('login')->with(['gagal'=>'<script type="text/javascript">
+            //                 $.toast({
+            //                   heading   : "Gagal",
+            //                   text    : "Email atau username tidak ditemukan!",
+            //                   showHideTransition : "slide",
+            //                   icon    : "warning",
+            //                   hideAfter   : false,
+            //                   position    : "bottom-right",
+            //                   bgColor   : "#FF4859"
+            //                 })
+            //             </script>']);
         }
     }
 

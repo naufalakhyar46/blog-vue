@@ -121,14 +121,30 @@ $konfig = App\Models\Konfigurasi::first();
       contentType: false,
       processData: false,
       success: function(response) {
-        // console.log(response.token)
-        let data = response.data; 
-        localStorage.setItem('user',JSON.stringify(data))
-        localStorage.setItem('jwt',response.token)
-        window.location.href= '{{ url("/panel/dashboard") }}';
+        console.log(response.status)
+        if(response.status){
+          let data = response.data; 
+          localStorage.setItem('user',JSON.stringify(data))
+          localStorage.setItem('jwt',response.token)
+          window.location.href= '{{ url("/panel/dashboard") }}';
+        }else{
+          $('#exampleInputEmail').val('')
+          $('#exampleInputPassword').val('')
+          $('#exampleInputEmail').focus()
+          $.toast({
+                heading   : "Gagal",
+                text    : response.message,
+                showHideTransition : "slide",
+                icon    : "warning",
+                hideAfter   : false,
+                position    : "bottom-right",
+                bgColor   : "#FF4859"
+              })
+        }
       },
       error: function(xhr, status) {
         console.log(xhr)
+        console.log(error)
       },
     })
   })
