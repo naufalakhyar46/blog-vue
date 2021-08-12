@@ -52,22 +52,7 @@ export default {
         }
     },
     created(){
-        // $('#exampleRepeatPassword').keyup(function() {
-        //     let valid = $('#valid')
-        //     let pass = $('#exampleInputPassword').val()
-        //     let xpass = $(this).val();
-        //     if(pass != xpass){
-        //     valid.attr('class','text-danger')
-        //     valid.html('<br><i class="fa fa-times-circle"></i> Password tidak sama')
-        //     $('#tombol').attr('class','btn btn-primary btn-user btn-block disabled')
-        //     $('#tombol').attr('type','button')
-        //     }else{
-        //     valid.attr('class','text-success')
-        //     valid.html('<br><i class="fa fa-check-circle"></i> Password sama')
-        //     $('#tombol').attr('class','btn btn-primary btn-user btn-block')
-        //     $('#tombol').attr('type','submit')
-        //     }
-        // });
+       
         $(document).on('change', '#cekpassword', function(){
             let pass = $('#exampleInputPassword')
             let xpass = $('#exampleRepeatPassword')
