@@ -68,38 +68,7 @@ $konfig = App\Models\Konfigurasi::first();
   <script src="{{ asset('auth_login') }}/sb-admin-2.min.js"></script>
 <script src="{{ asset('js/app.js') }}"></script>
 
-<!-- Cek ulangi password -->
-{{-- <script type="text/javascript">
-  $('#exampleRepeatPassword').keyup(function() {
-    valid = $('#valid')
-    pass = $('#exampleInputPassword').val()
-    xpass = $(this).val();
-    if(pass != xpass){
-      valid.attr('class','text-danger')
-      valid.html('<br><i class="fa fa-times-circle"></i> Password tidak sama')
-      $('#tombol').attr('class','btn btn-primary btn-user btn-block disabled')
-      $('#tombol').attr('type','button')
-    }else{
-      valid.attr('class','text-success')
-      valid.html('<br><i class="fa fa-check-circle"></i> Password sama')
-      $('#tombol').attr('class','btn btn-primary btn-user btn-block')
-      $('#tombol').attr('type','submit')
-    }
-  });
-  $('#cekpassword').change(function(){
-    pass = $('#exampleInputPassword')
-    xpass = $('#exampleRepeatPassword')
-    if($(this).is(':checked')){
-      pass.attr('type','text')
-      xpass.attr('type','text')
-      $('#cektext').html('Hide Password')
-    }else{
-      pass.attr('type','password')
-      xpass.attr('type','password')
-      $('#cektext').html('Show Password')
-    }
-  })
-</script> --}}
+
 </body>
 
 </html>

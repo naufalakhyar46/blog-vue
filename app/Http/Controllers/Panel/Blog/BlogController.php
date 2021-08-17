@@ -16,39 +16,33 @@ class BlogController extends Controller
 {
     public function index(Request $request)
     {
-        $data = Blog::orderBy('created_at','Desc')->get();
-            return Datatables::of($data)
-                    ->addIndexColumn()
-                    ->addColumn('action', function($row){
-     
-                            $btn = '<button role="button" class="btn btn-warning tmbPindah" title="Edit" data-id="'.$row->id.'"><i class="fa fa-pencil"></i> </button>&nbsp;';
-                           $btn.= '<a href="javascript:void(0)" data-id="'.$row->id.'" role="button" class="btn btn-danger tmbHapus" title="Hapus"><i class="fa fa-trash"></i> </a>&nbsp;';
-                        
-                            return $btn;
-                    })
-                    ->addColumn('image', function($row){
-                        if($row['image'] != null){
-                           $gambar = '<a href="'.url('image/blog',optional($row)->image).'" class="gambar_lt" data-toggle="lightbox" data-gallery="my-gallery" >
-                          <img src="'.url('image/blog',optional($row)->image).'" class="gambar_lt" style="width:290px;height:170px;margin-bottom: 10px" width="" alt="'.optional($row)->image.'">
-                          </a>';
-                        }else{
-                            $gambar = 'Gambar Kosong';
-                        }
-                        return $gambar;
-                    })
-                    ->addColumn('name', function($row){
-                        $name = $row->user->name;
-                        return $name;
-                    })
-                    ->addColumn('tanggal', function($row){
-     
-                        $tgl = $row['created_at']->isoFormat('DD MMMM YYYY');
-    
-                         return $tgl;
-                    })
+        if ( $request->input('client') ) {
+            return Blog::with(['user'])->orderBy('id','asc')->get();
+        }
 
-                    ->rawColumns(['action','image','name','tanggal'])
-                    ->make(true);
+        $columns = ['id','title', 'image', 'name','created_at'];
+
+        $length = $request->input('length');
+        $column = $request->input('column'); //Index
+        $dir = $request->input('dir');
+        $searchValue = $request->input('search');
+
+        if($dir == null && $columns[$column] == null){
+            $query = Blog::with('user')->orderBy('id', 'desc');
+        }else{
+            $query = Blog::with('user')->orderBy($columns[$column], $dir);
+        }
+
+        if ($searchValue) {
+            $query->where(function($query) use ($searchValue) {
+                $query->where('title', 'like', '%' . $searchValue . '%')
+                ->orWhere('created_at', 'like', '%' . $searchValue . '%');
+            });
+        }
+
+        $projects = $query->paginate($length);
+        
+        return ['data' => $projects, 'draw' => $request->input('draw')];
     }
 
     public function show($id)

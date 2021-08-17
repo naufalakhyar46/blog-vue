@@ -177,6 +177,13 @@ $konfig = App\Models\Konfigurasi::first();
 </script>
 <script>
   $(function () {
+    $(document).on('click', '[data-toggle="lightbox"]', function(event) {
+              event.preventDefault();
+              $(this).ekkoLightbox({
+              loadingMessage: "Loading…",
+              showArrows: true,
+            });
+        });
     $('#example1').DataTable()
     $('#example2').DataTable({
       'paging'      : true,

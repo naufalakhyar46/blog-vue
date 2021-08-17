@@ -60,6 +60,20 @@ export default {
           this.isLoggedIn = localStorage.getItem('jwt') !== null; 
           this.user = JSON.parse(localStorage.getItem('user'))
           this.isPhoto = this.user.photo !== null;
+          axios.get('/get-session').then((response) => {
+              // console.log(response.data.id)
+              if(response.data.id == null){
+                  axios.defaults.headers.common['Content-Type'] = 'application/json'
+                  axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('jwt')
+                  axios.get('/logout').then((response) => {
+                          localStorage.removeItem('jwt')
+                          localStorage.removeItem('user')
+                          window.location.href= '/auth/login';
+                  })
+              }
+          }).catch((error) => {
+            //
+          })
       },
      
     }

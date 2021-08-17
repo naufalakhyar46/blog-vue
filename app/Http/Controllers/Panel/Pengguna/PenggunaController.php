@@ -15,32 +15,33 @@ class PenggunaController extends Controller
 {
     public function index(Request $request)
     {
-        $data = User::orderBy('name','asc')->get();
-            return Datatables::of($data)
-                    ->addIndexColumn()
-                    ->addColumn('action', function($row){
-     
-                           $btn = '<a href="javascript:void(0)" role="button" class="btn btn-warning tmbEdit" data-id="'.$row->id.'" title="Edit"><i class="fa fa-pencil"></i> </a>&nbsp;';
-                           $btn.= '<a href="javascript:void(0)" data-id="'.$row->id.'" role="button" class="btn btn-danger tmbHapus" title="Hapus"><i class="fa fa-trash"></i> </a>&nbsp;';
-                        
-                        //    $btn = '<a href="#" data-target="#edit'.$row['id'].'" data-toggle="modal" role="button" class="btn btn-warning" title="Edit"><i class="fa fa-pencil"></i> </a>&nbsp;';
-                        //    $btn.= '<a href="#" data-target="#hapus'.$row['id'].'" data-toggle="modal" role="button" class="btn btn-danger" title="Hapus"><i class="fa fa-trash"></i> </a>&nbsp;';
-                            return $btn;
-                    })
-                    ->addColumn('photo', function($row){
-                        if($row['photo'] != null){
-                           $gambar = '<a href="'.url('image/profile',optional($row)->photo).'" class="gambar_lt" data-toggle="lightbox" data-gallery="my-gallery" >
-                          <img src="'.url('image/profile',optional($row)->photo).'" class="gambar_lt" style="width:290px;height:170px;margin-bottom: 10px" width="" alt="'.optional($row)->photo.'">
-                          </a>';
-                        }else{
-                            $gambar = 'Gambar Kosong';
-                        }
-                        return $gambar;
-                    })
-                    
+        if ( $request->input('client') ) {
+            return User::select('id', 'name', 'email', 'photo')->orderBy('id','asc')->get();
+        }
 
-                    ->rawColumns(['action','photo'])
-                    ->make(true);
+        $columns = ['id','name', 'email', 'photo'];
+
+        $length = $request->input('length');
+        $column = $request->input('column'); //Index
+        $dir = $request->input('dir');
+        $searchValue = $request->input('search');
+
+        if($dir == null && $columns[$column] == null){
+            $query = User::select('id', 'name', 'email', 'photo')->orderBy('id', 'desc');
+        }else{
+            $query = User::select('id', 'name', 'email', 'photo')->orderBy($columns[$column], $dir);
+        }
+
+        if ($searchValue) {
+            $query->where(function($query) use ($searchValue) {
+                $query->where('name', 'like', '%' . $searchValue . '%')
+                ->orWhere('email', 'like', '%' . $searchValue . '%');
+            });
+        }
+
+        $projects = $query->paginate($length);
+        
+        return ['data' => $projects, 'draw' => $request->input('draw')];
     }
 
     public function show($id)
@@ -69,9 +70,8 @@ class PenggunaController extends Controller
                 'message' => $validator->errors(),
             ], 403);
         }
-
         $user = new User;
-        if($request->photo != null){
+        if($request->photo != "null"){
             $path_img = 'image/profile/';
             $fileName = 'profile_'.time().'.'.$request->photo->getClientOriginalExtension();
             $user->photo = $fileName;
@@ -196,7 +196,7 @@ class PenggunaController extends Controller
         }
 
         $user = User::firstWhere('id',$id);
-        if($request->photo != null){
+        if($request->photo != "null"){
             $path_img = 'image/profile/';
             if($user->photo != null){
                 unlink($path_img.$user->photo);

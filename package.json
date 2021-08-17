@@ -24,6 +24,7 @@
     "dependencies": {
         "jquery": "^3.6.0",
         "mixins": "0.0.1",
+        "moment": "^2.29.1",
         "nprogress": "^0.2.0",
         "vue-router": "^3.5.2",
         "vuejs-noty": "^0.1.3"

@@ -30,6 +30,7 @@ Route::get('blog/detail-blog/{slug}', [DetailController::class,'index']);
 // Route::get('/login', [AuthController::class,'login'])->name('login');
 // Route::get('/logout', [AuthController::class,'logout'])->name('logout');
 Route::post('/login', [AuthController::class,'_proses_login'])->name('login.api');
+Route::get('/get-session', [AuthController::class,'getSession'])->name('get-session');
 
 // Route::get('/register', [AuthController::class,'regis'])->name('register');
 // Route::get('/reset', [AuthController::class,'reset_pass'])->name('reset');

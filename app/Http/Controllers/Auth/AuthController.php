@@ -389,6 +389,14 @@ class AuthController extends Controller
         }
     }
 
+    public function getSession()
+    {
+      $data = [
+         'id' =>Session::get('id'),
+         'name' =>Session::get('name'),
+      ];
+      return response()->json($data);
+    }
     public function logout(Request $request){
         try {
           JWTAuth::parseToken()->authenticate();
