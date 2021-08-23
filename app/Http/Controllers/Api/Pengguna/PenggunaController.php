@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Panel\Pengguna;
+namespace App\Http\Controllers\Api\Pengguna;
 
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -19,18 +19,21 @@ class PenggunaController extends Controller
             return User::select('id', 'name', 'email', 'photo')->orderBy('id','asc')->get();
         }
 
-        $columns = ['id','name', 'email', 'photo'];
-        $length = $request->input('length');
-        $column = $request->input('column'); //Index
-        $dir = $request->input('dir');
+        // $columns = ['id','name', 'email', 'photo'];
+        // $length = $request->input('length');
+        // $column = $request->input('column'); //Index
+        // $dir = $request->input('dir');
+        // $searchValue = $request->input('search');
+
+        $sort = $request->input('sort');
+        $per_page = $request->input('per_page');
         $searchValue = $request->input('search');
 
-        if($dir == null && $columns[$column] == null){
-            $query = User::orderBy('id', 'desc');
+        if($sort != null){
+            $query = User::select('id', 'name', 'email', 'photo')->orderBy($sort, 'asc');
         }else{
-            $query = User::orderBy($columns[$column], $dir);
+            $query = User::select('id', 'name', 'email', 'photo')->orderBy('id', 'desc');
         }
-
 
         if ($searchValue) {
             $query->where(function($query) use ($searchValue) {
@@ -39,7 +42,7 @@ class PenggunaController extends Controller
             });
         }
 
-        $projects = $query->paginate($length);
+        $projects = $query->paginate($per_page);
         
         return ['data' => $projects, 'draw' => $request->input('draw')];
     }
@@ -226,12 +229,15 @@ class PenggunaController extends Controller
                 return response()->json(['error'=>'token_not_found'], 401);
             }
         }
-        $data = User::firstWhere('id',$id);
-        $path_img = 'image/profile/';
-        if($data->photo != null){
-            unlink($path_img.$data->photo);
+        $single_user_id = explode(',' , $id);
+        foreach($single_user_id as $key) {
+            $data = User::firstWhere('id',$key);
+            $path_img = 'image/profile/';
+            if($data->photo != null){
+                unlink($path_img.$data->photo);
+            }
+            $data->delete();
         }
-        $data->delete();
         return response()->json(
             [
                 'status'=>true,

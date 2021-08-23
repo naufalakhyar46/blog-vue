@@ -47,3 +47,28 @@ Route::prefix('/konfigurasi')->group(function(){
     Route::post('/update', [KonfigurasiController::class,'update']);
     Route::get('/show', [KonfigurasiController::class,'show']);
 });
+
+Route::prefix('/piaf')->group(function(){
+    Route::prefix('/pengguna')->group(function(){
+        Route::get('/', 'App\Http\Controllers\Api\Pengguna\PenggunaController@index');
+        Route::post('/', 'App\Http\Controllers\Api\Pengguna\PenggunaController@store');
+        Route::post('/{id}', 'App\Http\Controllers\Api\Pengguna\PenggunaController@update');
+        Route::post('/profile/{id}', 'App\Http\Controllers\Api\Pengguna\PenggunaController@profile');
+        Route::post('/change-pass/{id}', 'App\Http\Controllers\Api\Pengguna\PenggunaController@change_pass');
+        Route::delete('/{id}', 'App\Http\Controllers\Api\Pengguna\PenggunaController@destroy');
+        Route::get('/show/{id}', 'App\Http\Controllers\Api\Pengguna\PenggunaController@show');
+    });
+
+    Route::prefix('/blog')->group(function(){
+        Route::get('/', 'App\Http\Controllers\Api\Blog\BlogController@index');
+        Route::post('/', 'App\Http\Controllers\Api\Blog\BlogController@store');
+        Route::post('/{id}', 'App\Http\Controllers\Api\Blog\BlogController@update');
+        Route::delete('/{id}', 'App\Http\Controllers\Api\Blog\BlogController@destroy');
+        Route::get('/show/{id}', 'App\Http\Controllers\Api\Blog\BlogController@show');
+    });
+
+    Route::prefix('/konfigurasi')->group(function(){
+        Route::post('/update', 'App\Http\Controllers\Api\Konfigurasi\KonfigurasiController@update');
+        Route::get('/show', 'App\Http\Controllers\Api\Konfigurasi\KonfigurasiController@show');
+    });
+});

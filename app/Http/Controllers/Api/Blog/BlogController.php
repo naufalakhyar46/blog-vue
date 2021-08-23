@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Panel\Blog;
+namespace App\Http\Controllers\Api\Blog;
 
 use JWTAuth;
 use Exception;
@@ -20,17 +20,28 @@ class BlogController extends Controller
             return Blog::with(['user'])->orderBy('id','asc')->get();
         }
 
-        $columns = ['id','title', 'image', 'name','created_at'];
-        $length = $request->input('length');
-        $column = $request->input('column'); //Index
-        $dir = $request->input('dir');
+        // $columns = ['id','title', 'image', 'name','created_at'];
+        // $length = $request->input('length');
+        // $column = $request->input('column'); //Index
+        // $dir = $request->input('dir');
+        $sort = $request->input('sort');
+        $per_page = $request->input('per_page');
         $searchValue = $request->input('search');
 
-        if($dir == null && $columns[$column] == null){
-            $query = Blog::with('user')->orderBy('id', 'desc');
+        if($sort != null){
+            if($sort == 'new_title'){
+                $query = Blog::with('user')->orderBy('created_at', 'desc');
+            }else{
+                $query = Blog::with('user')->orderBy($sort, 'asc');
+            }
         }else{
-            $query = Blog::with('user')->orderBy($columns[$column], $dir);
+            $query = Blog::with('user')->orderBy('created_at', 'desc');
         }
+        // if($dir == null && $columns[$column] == null){
+        //     $query = Blog::with('user')->orderBy('id', 'desc');
+        // }else{
+        //     $query = Blog::with('user')->orderBy($columns[$column], $dir);
+        // }
 
         if ($searchValue) {
             $query->where(function($query) use ($searchValue) {
@@ -39,7 +50,7 @@ class BlogController extends Controller
             });
         }
 
-        $projects = $query->paginate($length);
+        $projects = $query->paginate($per_page);
         
         return ['data' => $projects, 'draw' => $request->input('draw')];
     }
@@ -146,13 +157,21 @@ class BlogController extends Controller
         }
         $token = auth()->setTTL(7200)->attempt(['email'=>$cek->email,'password'=>$cek->password]);
         $user = User::firstWhere('id',$cek->id);
-        $data = Blog::firstWhere('id',$id);
-        $path_img = 'image/blog/';
-        if($data->image != null){
-            unlink($path_img.$data->image);
+        // $data = Blog::firstWhere('id',$id);
+        // $path_img = 'image/blog/';
+        // if($data->image != null){
+        //     unlink($path_img.$data->image);
+        // }
+        // $data->delete();
+        $single_user_id = explode(',' , $id);
+        foreach($single_user_id as $key) {
+            $data = Blog::firstWhere('id',$key);
+            $path_img = 'image/blog/';
+            if($data->image != null){
+                unlink($path_img.$data->image);
+            }
+            $data->delete();
         }
-        $data->delete();
-       
         return response()->json(
             [
                 'status'=>true,
