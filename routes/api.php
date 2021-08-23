@@ -22,7 +22,9 @@ use App\Http\Controllers\Panel\Konfigurasi\KonfigurasiController;
 //     return $request->user();
 // });
 
-// Route::post('/login', [AuthController::class,'_proses_login'])->name('login.api');
+Route::post('/login', [AuthController::class,'_proses_login'])->name('login.api');
+Route::post('/register', [AuthController::class,'register'])->name('register');
+Route::get('/logout', [AuthController::class,'logout'])->name('logout');
 Route::prefix('/pengguna')->group(function(){
     Route::get('/', [PenggunaController::class,'index']);
     Route::post('/', [PenggunaController::class,'store']);

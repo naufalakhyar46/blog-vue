@@ -15,7 +15,7 @@
         "lodash": "^4.17.19",
         "postcss": "^8.1.14",
         "resolve-url-loader": "^3.1.2",
-        "sass": "^1.32.11",
+        "sass": "^1.38.0",
         "sass-loader": "^11.0.1",
         "vue": "^2.6.12",
         "vue-loader": "^15.9.8",
@@ -23,6 +23,7 @@
     },
     "dependencies": {
         "jquery": "^3.6.0",
+        "laravel-vue-pagination": "^2.3.1",
         "mixins": "0.0.1",
         "moment": "^2.29.1",
         "nprogress": "^0.2.0",

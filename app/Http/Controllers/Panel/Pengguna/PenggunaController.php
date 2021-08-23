@@ -19,17 +19,20 @@ class PenggunaController extends Controller
             return User::select('id', 'name', 'email', 'photo')->orderBy('id','asc')->get();
         }
 
-        $columns = ['id','name', 'email', 'photo'];
+        // $columns = ['id','name', 'email', 'photo'];
+        // $length = $request->input('length');
+        // $column = $request->input('column'); //Index
+        // $dir = $request->input('dir');
+        // $searchValue = $request->input('search');
 
-        $length = $request->input('length');
-        $column = $request->input('column'); //Index
-        $dir = $request->input('dir');
+        $sort = $request->input('sort');
+        $per_page = $request->input('per_page');
         $searchValue = $request->input('search');
 
-        if($dir == null && $columns[$column] == null){
-            $query = User::select('id', 'name', 'email', 'photo')->orderBy('id', 'desc');
+        if($sort != null){
+            $query = User::select('id', 'name', 'email', 'photo')->orderBy($sort, 'asc');
         }else{
-            $query = User::select('id', 'name', 'email', 'photo')->orderBy($columns[$column], $dir);
+            $query = User::select('id', 'name', 'email', 'photo')->orderBy('id', 'desc');
         }
 
         if ($searchValue) {
@@ -39,7 +42,7 @@ class PenggunaController extends Controller
             });
         }
 
-        $projects = $query->paginate($length);
+        $projects = $query->paginate($per_page);
         
         return ['data' => $projects, 'draw' => $request->input('draw')];
     }
@@ -54,12 +57,11 @@ class PenggunaController extends Controller
     {
         $rules = [
             'name'                  => 'min:3',
-            'email'                 => 'email|unique:users,email',
+            'email'                 => 'unique:users,email',
         ];
  
         $messages = [
             'name.min'              => 'Nama lengkap minimal 3 karakter',
-            'email.email'           => 'Email tidak valid',
             'email.unique'          => 'Email sudah terdaftar',
         ];
  
@@ -136,12 +138,10 @@ class PenggunaController extends Controller
     {
         $rules = [
             'name'                  => 'min:3',
-            'email'                 => 'email',
         ];
  
         $messages = [
             'name.min'              => 'Nama lengkap minimal 3 karakter',
-            'email.email'           => 'Email tidak valid',
         ];
  
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -179,12 +179,10 @@ class PenggunaController extends Controller
     {
         $rules = [
             'name'                  => 'min:3',
-            'email'                 => 'email',
         ];
  
         $messages = [
             'name.min'              => 'Nama lengkap minimal 3 karakter',
-            'email.email'           => 'Email tidak valid',
         ];
  
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -231,12 +229,15 @@ class PenggunaController extends Controller
                 return response()->json(['error'=>'token_not_found'], 401);
             }
         }
-        $user = User::firstWhere('id',$id);
-        $path_img = 'image/profile/';
-        if($user->photo != null){
-            unlink($path_img.$user->photo);
+        $single_user_id = explode(',' , $id);
+        foreach($single_user_id as $key) {
+            $data = User::firstWhere('id',$key);
+            $path_img = 'image/profile/';
+            if($data->photo != null){
+                unlink($path_img.$data->photo);
+            }
+            $data->delete();
         }
-        $user->delete();
         return response()->json(
             [
                 'status'=>true,
